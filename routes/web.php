@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TodoController;
 use App\Http\Controllers\ProfileController;
-
+use App\Http\Controllers\Auth\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,7 +20,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Auth::routes();
@@ -29,18 +28,12 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::resource('/todo', TodoController::class);
 
-Route::get('/add', function () {
-    return view('todo.add');
-});
-
 Route::delete('/todos/{todo}', [TodoController::class, 'destroy'])->name('todo.destroy');
 
-
-
-
-
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::view('/two-factor-settings', 'auth.two-factor-setting')->name('two-factor-settings');
 });

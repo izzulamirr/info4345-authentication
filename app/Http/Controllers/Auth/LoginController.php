@@ -6,6 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Cache\RateLimiting\Limit;
+
 
 class LoginController extends Controller
 {
@@ -23,12 +28,30 @@ class LoginController extends Controller
     public function login(LoginRequest $request)
     {
         $credentials = $request->only('email', 'password');
-
-        if (Auth::attempt($credentials)) {
-            return redirect()->route('todo.index')->with('success', 'Login successful!');
+        $throttleKey = $request->email . '|' . $request->ip();
+    
+        // Check if the user is throttled
+        if (RateLimiter::tooManyAttempts($throttleKey, 3)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            return back()->withErrors([
+                'email' => "Too many login attempts. Please try again in $seconds seconds.",
+            ]);
         }
-
-        return back()->withErrors(['email' => 'Invalid credentials.']);
+    
+        $user = User::where('email', $credentials['email'])->first();
+    
+        if ($user && Hash::check($credentials['password'] . $user->salt, $user->password)) {
+            Auth::login($user);
+            RateLimiter::clear($throttleKey); // Clear attempts on successful login
+            return redirect()->intended(route('todo'))->with('success', 'Login successful!');
+        }
+    
+        RateLimiter::hit($throttleKey, 60); // Record a failed attempt (expires in 60 seconds)
+    
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ]);
+    
     }
 
     public function logout()

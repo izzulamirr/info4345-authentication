@@ -26,9 +26,13 @@ class RegisterController extends Controller
     {
         $validated = $request->validated();
 
+        $salt = \Illuminate\Support\Str::random(16);
+
+
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
+            'salt' => $salt, // Store the generated salt
             'password' => bcrypt($validated['password']),
             'nickname' => $validated['nickname'] ?? null,
             'phone_no' => $validated['phone_no'] ?? null,

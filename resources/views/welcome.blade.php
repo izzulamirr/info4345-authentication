@@ -14,8 +14,8 @@
     <style>
         html,
         body {
-            background-color: rgb(95, 46, 151);
-            color:rgb(196, 206, 52);
+            background-color: rgb(222, 209, 236);
+            color:rgb(22, 22, 21);
             font-family: 'Nunito', sans-serif;
             font-weight: 200;
             height: 100vh;
