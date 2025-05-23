@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\RegisterRequest;
+use App\Models\UserRole;
 
 class RegisterController extends Controller
 {
@@ -33,11 +34,20 @@ class RegisterController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'salt' => $salt, // Store the generated salt
-            'password' => bcrypt($validated['password']),
+            'password' => bcrypt($validated['password'] . $salt),
             'nickname' => $validated['nickname'] ?? null,
             'phone_no' => $validated['phone_no'] ?? null,
             'city' => $validated['city'] ?? null,
+        
         ]);
+
+        $userRole = UserRole::create([
+            'UserID' => $user->id,
+            'RoleID' => $validated['role'] === 'Administrator' ? 1 : 2, // Assuming 1 is for Admin and 2 is for User    
+            'RoleName' => $validated['role'], // <-- Add this line
+
+        ]);
+        
 
         auth()->login($user);
 

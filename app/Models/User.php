@@ -49,4 +49,25 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+       public function Admin()
+{
+    return $this->userRole && $this->userRole->RoleName === 'Administrator';
+}
+
+                public function userRole()
+        {
+            return $this->hasOne(UserRole::class, 'UserID');
+        }
+
+    public function permissions()
+    {
+        return $this->userRole ? $this->userRole->permissions() : collect();
+    }
+
+
+    public function todos()
+    {
+    return $this->hasMany(\App\Models\Todo::class, 'user_id');
+    }
 }

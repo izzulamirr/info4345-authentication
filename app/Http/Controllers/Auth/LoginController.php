@@ -14,16 +14,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 
 class LoginController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
+      protected $redirectTo = '/todo';
 
     public function login(LoginRequest $request)
     {
@@ -39,12 +30,22 @@ class LoginController extends Controller
         }
     
         $user = User::where('email', $credentials['email'])->first();
+
     
         if ($user && Hash::check($credentials['password'] . $user->salt, $user->password)) {
-            Auth::login($user);
-            RateLimiter::clear($throttleKey); // Clear attempts on successful login
-            return redirect()->intended(route('todo'))->with('success', 'Login successful!');
-        }
+    Auth::login($user);
+    RateLimiter::clear($throttleKey);
+
+    $role = $user->userRole ? $user->userRole->RoleName : null;
+
+    if ($role === 'Administrator') {
+        return redirect()->route('admin.dashboard')->with('success', 'Welcome Admin!');
+    } elseif ($role === 'User') {
+        return redirect()->intended(route('todo.index'))->with('success', 'Welcome User!');
+    } else {
+        return redirect('/')->with('error', 'Role not assigned.');
+    }
+}
     
         RateLimiter::hit($throttleKey, 60); // Record a failed attempt (expires in 60 seconds)
     
@@ -76,5 +77,7 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
         $this->middleware('auth')->only('logout');
     }
+
+    
     
 }

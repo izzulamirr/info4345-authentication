@@ -7,9 +7,12 @@
       <h2>To-Do List</h2>
     </div>
     <div class="col-md-6 d-flex justify-content-end">
-    <a href="{{ route('todo.create') }}" class="btn btn-primary">
-          <i class="fa fa-plus"></i> Add New To do
-        </a>
+      @php
+        $canCreate = auth()->user()->permissions()->where('Description', 'Create')->count() > 0;
+      @endphp
+      @if($canCreate)
+        <a href="{{ route('todo.create') }}" class="btn btn-primary">New Task</a>
+      @endif
     </div>
     <br>
     <div class="col-md-12">
@@ -27,42 +30,50 @@
         <thead class="thead-light">
           <tr>
             <th width="5%">#</th>
-            <th><center>Task Name</th>
+            <th><center>Task Name</center></th>
             <th width="10%"><center>Task Status</center></th>
             <th width="14%"><center>Action</center></th>
           </tr>
         </thead>
         <tbody>
+        @php
+          $canUpdate = auth()->user()->permissions()->where('Description', 'Update')->count() > 0;
+          $canDelete = auth()->user()->permissions()->where('Description', 'Delete')->count() > 0;
+        @endphp
         @forelse ($todos as $todo)
-    <tr>
-        <th>{{ $todo->id }}</th>
-        <td>{{ $todo->title }}</td>
-        <td><center>{{ ucfirst($todo->status) }}</center></td>
-        <td>
-            <div class="d-flex justify-content-center">
+          <tr>
+            <th>{{ $todo->id }}</th>
+            <td>{{ $todo->title }}</td>
+            <td><center>{{ ucfirst($todo->status) }}</center></td>
+            <td>
+              <div class="d-flex justify-content-center">
                 <a href="{{ route('todo.show', $todo->id) }}" class="btn btn-info btn-sm mr-2" aria-label="View Todo">
-                    View
+                  View
                 </a>
-                <a href="{{ route('todo.edit', $todo->id) }}" class="btn btn-warning btn-sm mr-2" aria-label="Edit Todo">
-                    Edit
-                </a>
-                <form action="{{ route('todo.destroy', $todo->id) }}" method="post">
+                @if($canUpdate)
+                  <a href="{{ route('todo.edit', $todo->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                @endif
+                @if($canDelete)
+                  <form action="{{ route('todo.destroy', $todo->id) }}" method="POST" style="display:inline;">
                     @csrf
                     @method('DELETE')
-                    <button class="btn btn-danger btn-sm" type="submit" aria-label="Delete Todo" onclick="return confirm('Are you sure you want to delete this todo?')">
-                        Delete
-                    </button>
-                </form>
-            </div>
-        </td>
-    </tr>
-@empty
-    <tr>
-        <td colspan="4">
-            <center>No todos found. <a href="{{ route('todo.create') }}">Create a new todo</a>.</center>
-        </td>
-    </tr>
-@endforelse
+                    <button class="btn btn-danger btn-sm" onclick="return confirm('Delete this task?')">Delete</button>
+                  </form>
+                @endif
+              </div>
+            </td>
+          </tr>
+        @empty
+          <tr>
+            <td colspan="4">
+              <center>No todos found. 
+                @if($canCreate)
+                  <a href="{{ route('todo.create') }}">Create a new todo</a>.
+                @endif
+              </center>
+            </td>
+          </tr>
+        @endforelse
         </tbody>
       </table>
     </div>
