@@ -28,7 +28,6 @@ class RegisterRequest extends FormRequest
             'nickname' => ['nullable', 'string', 'max:255'],
             'phone_no' => ['nullable', 'string', 'regex:/^\d{10,15}$/'], // Only digits, 10-15 characters
             'city' => ['nullable', 'string', 'max:255'],
-            'role' => 'nullable|in:user,Administrator', // <-- Add this line
 
         ];
     }

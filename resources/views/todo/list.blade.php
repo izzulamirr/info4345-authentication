@@ -7,12 +7,7 @@
       <h2>To-Do List</h2>
     </div>
     <div class="col-md-6 d-flex justify-content-end">
-      @php
-        $canCreate = auth()->user()->permissions()->where('Description', 'Create')->count() > 0;
-      @endphp
-      @if($canCreate)
-        <a href="{{ route('todo.create') }}" class="btn btn-primary">New Task</a>
-      @endif
+      <a href="{{ route('todo.create') }}" class="btn btn-primary">New Task</a>
     </div>
     <br>
     <div class="col-md-12">
@@ -36,10 +31,6 @@
           </tr>
         </thead>
         <tbody>
-        @php
-          $canUpdate = auth()->user()->permissions()->where('Description', 'Update')->count() > 0;
-          $canDelete = auth()->user()->permissions()->where('Description', 'Delete')->count() > 0;
-        @endphp
         @forelse ($todos as $todo)
           <tr>
             <th>{{ $todo->id }}</th>
@@ -50,16 +41,12 @@
                 <a href="{{ route('todo.show', $todo->id) }}" class="btn btn-info btn-sm mr-2" aria-label="View Todo">
                   View
                 </a>
-                @if($canUpdate)
-                  <a href="{{ route('todo.edit', $todo->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                @endif
-                @if($canDelete)
-                  <form action="{{ route('todo.destroy', $todo->id) }}" method="POST" style="display:inline;">
-                    @csrf
-                    @method('DELETE')
-                    <button class="btn btn-danger btn-sm" onclick="return confirm('Delete this task?')">Delete</button>
-                  </form>
-                @endif
+                <a href="{{ route('todo.edit', $todo->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                <form action="{{ route('todo.destroy', $todo->id) }}" method="POST" style="display:inline;">
+                  @csrf
+                  @method('DELETE')
+                  <button class="btn btn-danger btn-sm" onclick="return confirm('Delete this task?')">Delete</button>
+                </form>
               </div>
             </td>
           </tr>
@@ -67,9 +54,7 @@
           <tr>
             <td colspan="4">
               <center>No todos found. 
-                @if($canCreate)
-                  <a href="{{ route('todo.create') }}">Create a new todo</a>.
-                @endif
+                <a href="{{ route('todo.create') }}">Create a new todo</a>.
               </center>
             </td>
           </tr>

@@ -55,14 +55,7 @@
                         <label for="email">Email</label>
                         <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" required>
                     </div>
-                    <div class="form-group">
-    <label for="role">Role</label>
-    <select name="role" id="role" class="form-control" required>
-        <option value="" disabled selected>Select your role</option>
-        <option value="user">User</option>
-        <option value="Administrator">Administrator</option>
-    </select>
-</div>
+                    
                     <div class="form-group">
                         <label for="nickname">Nickname</label>
                         <input type="text" name="nickname" id="nickname" class="form-control" value="{{ old('nickname') }}">

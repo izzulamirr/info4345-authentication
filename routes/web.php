@@ -10,9 +10,7 @@ Route::get('/', function () {
 });
 Auth::routes();
 
-Route::post('login', [App\Http\Controllers\Auth\LoginController::class, 'login'])
-    ->middleware('throttle:login')
-    ->name('login');
+Route::post('login', [App\Http\Controllers\Auth\LoginController::class, 'login'])    ->name('login');
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 

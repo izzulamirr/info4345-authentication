@@ -35,7 +35,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
+        
         'remember_token',
         'two_factor_secret',
         'two_factor_recovery_codes',
@@ -50,24 +50,5 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-       public function Admin()
-{
-    return $this->userRole && $this->userRole->RoleName === 'Administrator';
-}
-
-                public function userRole()
-        {
-            return $this->hasOne(UserRole::class, 'UserID');
-        }
-
-    public function permissions()
-    {
-        return $this->userRole ? $this->userRole->permissions() : collect();
-    }
-
-
-    public function todos()
-    {
-    return $this->hasMany(\App\Models\Todo::class, 'user_id');
-    }
+      
 }
