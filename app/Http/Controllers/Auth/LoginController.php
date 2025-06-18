@@ -34,12 +34,11 @@ class LoginController extends Controller
     
         if ($user && Hash::check($credentials['password'] . $user->salt, $user->password)) {
     Auth::login($user);
-    RateLimiter::clear($throttleKey);
 
     $role = $user->userRole ? $user->userRole->RoleName : null;
 
     if ($role === 'Administrator') {
-        return redirect()->route('admin.dashboard')->with('success', 'Welcome Admin!');
+        return redirect()->route('todo.index')->with('success', 'Welcome Admin!');
     } elseif ($role === 'User') {
         return redirect()->intended(route('todo.index'))->with('success', 'Welcome User!');
     } else {
