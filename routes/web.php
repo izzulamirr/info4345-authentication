@@ -24,13 +24,3 @@ Route::middleware(['auth'])->group(function () {
     Route::view('/two-factor-settings', 'auth.two-factor-setting')->name('two-factor-settings');
 });
 
-// Admin routes
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-    Route::delete('/admin/users/{id}', [AdminController::class, 'destroy'])->name('users.destroy');
-    Route::post('/admin/users/{id}/deactivate', [AdminController::class, 'deactivate'])->name('users.deactivate');
-    Route::post('/admin/users/{id}/activate', [AdminController::class, 'activate'])->name('users.activate');
-
-    Route::get('/admin/permissions', [AdminController::class, 'permissions'])->name('admin.permissions');
-    Route::post('/admin/permissions', [AdminController::class, 'updatePermissions'])->name('admin.permissions.update');
-});
